@@ -6,9 +6,25 @@
 # REQUIRE A SPECIFIC TERRAFORM VERSION OR HIGHER
 # This module has been updated with 0.12 syntax, which means it is no longer compatible with any versions below 0.12.
 # This module is forked from https://github.com/gruntwork-io/intro-to-terraform/tree/master/s3-backend
-# ----------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
 
 terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"  
+    }
+  }
+
+  backend "s3" {
+    bucket         = "thenameofthebucketid"
+    key            = "some_environment/terraform.tfstate"
+    region         = "us-east-1"
+    encrypt        = true
+    kms_key_id     = "802c849f-6dcb-4a14-875d-ba67d9d70c0f"
+    dynamodb_table = "THE_ID_OF_THE_DYNAMODB_TABLE"
+  }
+
   required_version = ">= 0.12"
 }
 
@@ -16,7 +32,9 @@ terraform {
 # CONFIGURE OUR AWS CONNECTION
 # ------------------------------------------------------------------------------
 
-provider "aws" {}
+provider "aws" {
+  region  = "us-east-1"  
+}
 
 # ------------------------------------------------------------------------------
 # CREATE THE S3 BUCKET
@@ -62,3 +80,4 @@ resource "aws_dynamodb_table" "terraform_lock" {
     type = "S"
   }
 }
+
